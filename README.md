@@ -19,4 +19,8 @@ http-server
 ```
 navigate to `http://localhost:8080`.
 
+# Live demo
+https://makarandp0.github.io/rnnoise_wasm/
+
+
 
