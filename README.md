@@ -12,5 +12,11 @@ git submodule init &  git submodule update
 ```
 
 # Run
-To test locally, run `node demo/server.mjs` and then navigate to `http://localhost:8080`.
+To test locally,
+```
+cd dist
+http-server
+```
+navigate to `http://localhost:8080`.
+
 
