@@ -1,3 +1,0 @@
-'use strict';let instance,heapFloat32;
-registerProcessor("rnnoise",class extends AudioWorkletProcessor{constructor(a){super({...a,numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]});instance||(heapFloat32=new Float32Array((instance=(new WebAssembly.Instance(a.processorOptions.module)).exports).memory.buffer));this.state=instance.newState();this.alive=!0;this.port.onmessage=({data:b})=>{this.alive&&(b?this.port.postMessage({vadProb:instance.getVadProb(this.state)}):(this.alive=!1,instance.deleteState(this.state)))}}process(a,b,
-c){if(this.alive)return heapFloat32.set(a[0][0],instance.getInput(this.state)/4),a=b[0][0],(b=instance.pipe(this.state,a.length)/4)&&a.set(heapFloat32.subarray(b,b+a.length)),!0}});

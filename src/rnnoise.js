@@ -1,3 +1,4 @@
+
 if (navigator.mediaDevices &&
     (window.AudioContext || (window.AudioContext = window.webkitAudioContext)) &&
     (window.AudioWorkletNode || window.ScriptProcessorNode) &&
@@ -10,19 +11,19 @@ if (navigator.mediaDevices &&
                 stream.getTracks().forEach(t => { t.stop() });
                 return navigator.mediaDevices.enumerateDevices();
             }).then(devices => {
-                const input = document.getElementById("input"),
-                    output = document.getElementById("output"),
-                    start = document.getElementById("start"),
-                    vadProb = document.getElementById("vadProb"),
-                    sink = Audio.prototype.setSinkId;
+                const input = document.getElementById("input");
+                const output = document.getElementById("output");
+                const vadProb = document.getElementById("vadProb");
+                const sink = Audio.prototype.setSinkId;
                 input.disabled = false;
-                if (sink)
+                if (sink) {
                     output.disabled = false;
-                else
+                } else {
                     devices = devices.filter(d => d.kind == "audioinput").concat({
                         kind: "audiooutput",
                         label: "Default"
                     });
+                }
                 devices.forEach(d => {
                     if (d.kind == "audioinput")
                         input.appendChild(Object.assign(document.createElement("option"), {
@@ -35,7 +36,9 @@ if (navigator.mediaDevices &&
                             textContent: d.label
                         }));
                 });
-                start.addEventListener("click", async () => {
+
+                const useRNN_checkbox = document.getElementById('use_rnn');
+                document.getElementById("start").addEventListener("click", async () => {
                     start.disabled = output.disabled = input.disabled = true;
                     const context = new AudioContext({ sampleRate: 48000 });
                     try {
@@ -62,17 +65,41 @@ if (navigator.mediaDevices &&
                                 }
                             }),
                             RNNoiseNode.register(context)
-                        ]), source = context.createMediaStreamSource(stream),
-                            rnnoise = new RNNoiseNode(context);
+                        ]);
+                        const source = context.createMediaStreamSource(stream);
+                        const rnnoise = new RNNoiseNode(context);;
                         rnnoise.connect(destination);
                         source.connect(rnnoise);
                         rnnoise.onstatus = data => { vadProb.style.width = data.vadProb * 100 + "%"; };
-                        (function a() {
-                            requestAnimationFrame(() => {
-                                rnnoise.update(true);
-                                a();
-                            });
-                        })();
+
+                        let timer = null;
+                        function setupVADAnimation(on) {
+                            if (on) {
+                                timer = requestAnimationFrame(() => {
+                                    rnnoise.update(true);
+                                    setupVADAnimation(true);
+                                });
+                            } else {
+                                rnnoise.update(false);
+                                cancelAnimationFrame(timer);
+                            }
+                        }
+
+                        useRNN_checkbox.checked = true;
+                        useRNN_checkbox.disabled = false;
+                        setupVADAnimation(true);
+                        useRNN_checkbox.addEventListener('change', (event) => {
+                            try {
+                                if (event.currentTarget.checked) {
+                                    setupVADAnimation(true);
+                                } else {
+                                    setupVADAnimation(false);
+                                }
+                            } catch (err) {
+                                console.log('Error:', err);
+                            }
+                        });
+
                     } catch (e) {
                         context.close();
                         console.error(e);

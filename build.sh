@@ -1,15 +1,20 @@
 set -eu -o pipefail
 mkdir -p dist
-/emsdk/node/*/bin/node /emsdk/upstream/emscripten/node_modules/.bin/google-closure-compiler \
-    --language_in ECMASCRIPT_NEXT \
-    --language_out ECMASCRIPT_2018 \
-    --js_output_file dist/rnnoise-runtime.js \
-    src/runtime.js
-/emsdk/node/*/bin/node /emsdk/upstream/emscripten/node_modules/.bin/google-closure-compiler \
-    --language_in ECMASCRIPT_NEXT \
-    --language_out ECMASCRIPT_2018 \
-    --js_output_file dist/rnnoise-processor.js \
-    src/processor.js
+cp index.css dist/index.css
+cp index.html dist/index.html
+cp src/rnnoise.js dist/rnnoise.js
+cp src/runtime.js dist/rnnoise-runtime.js
+cp src/processor.js dist/rnnoise-processor.js
+# /emsdk/node/*/bin/node /emsdk/upstream/emscripten/node_modules/.bin/google-closure-compiler \
+#     --language_in ECMASCRIPT_NEXT \
+#     --language_out ECMASCRIPT_2018 \
+#     --js_output_file dist/rnnoise-runtime.js \
+#     src/runtime.js
+# /emsdk/node/*/bin/node /emsdk/upstream/emscripten/node_modules/.bin/google-closure-compiler \
+#     --language_in ECMASCRIPT_NEXT \
+#     --language_out ECMASCRIPT_2018 \
+#     --js_output_file dist/rnnoise-processor.js \
+#     src/processor.js
 emcc \
     -s ENVIRONMENT=worker \
     -s TOTAL_STACK=49152 -s TOTAL_MEMORY=327680 \
