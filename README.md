@@ -4,11 +4,14 @@
 -  This project uses [rnnnoise](https://github.com/xiph/rnnoise/) sub module.
 ```
 git submodule init &  git submodule update
+npm install
 ```
 
 # Build
 ```
  ./build-docker.sh
+npm run build
+
 ```
 
 # Run
