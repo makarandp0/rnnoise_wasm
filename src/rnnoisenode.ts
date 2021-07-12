@@ -11,8 +11,8 @@ export class RNNoiseNode extends AudioWorkletNode {
   private _vadProb: number = 0;
   private _isActive: boolean = true;
   static async register(context: AudioContext) {
-    RNNoiseNode.webModule = await fetchAndCompileWebAssemblyModule('/rnnoise-processor.wasm');
-    await context.audioWorklet.addModule('/processor.js');
+    RNNoiseNode.webModule = await fetchAndCompileWebAssemblyModule('rnnoise-processor.wasm');
+    await context.audioWorklet.addModule('processor.js');
   }
 
   constructor(context: BaseAudioContext) {
